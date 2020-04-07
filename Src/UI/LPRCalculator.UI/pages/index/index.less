@@ -1,0 +1,103 @@
+.content {
+	font-size: 24rpx;
+	> .header {
+		color: #fff;
+		background-color: #408ce2;
+		padding: 25rpx 30rpx;
+		.option {
+			display: flex;
+			border: 1px #fff solid;
+			border-radius: 10rpx;
+			width: 440rpx;
+			margin: 0 auto;
+			height: 45rpx;
+			line-height: 45rpx;
+			> .item {
+				flex-grow: 1;
+				text-align: center;
+			}
+			> .item.action {
+				background-color: #fff;
+				color: #408ce2;
+			}
+		}
+
+		.monthly {
+			padding: 20rpx 0;
+			.text {
+				font-size: 22rpx;
+				height: 50rpx;
+				line-height: 50rpx;
+			}
+			.price {
+				font-size: 55rpx;
+				height: 75rpx;
+				line-height: 75rpx;
+			}
+		}
+
+		.otherPrice {
+			display: flex;
+			padding: 10rpx 0;
+			.text {
+				font-size: 22rpx;
+				height: 35rpx;
+				line-height: 35rpx;
+			}
+			.price {
+				font-size: 38rpx;
+				height: 60rpx;
+				line-height: 60rpx;
+			}
+			.interest {
+				flex-grow: 1;
+				padding-right: 30rpx;
+			}
+			.amount {
+				flex-grow: 1;
+				padding-left: 30rpx;
+				border-left: 1rpx solid #6fc1ee;
+			}
+		}
+	}
+	> .parameter {
+		.detailText {
+			height: 60rpx;
+			line-height: 60rpx;
+			color: #428de2;
+			background-color: #ebf3f9;
+			text-align: center;
+		}
+
+		.row {
+			font-size: 28rpx;
+			padding-left: 30rpx;
+			border-top: 1rpx solid #e5e5e5;
+			border-bottom: 1rpx solid #e5e5e5;
+			.item:nth-child(n + 1) {
+				border-top: 1rpx solid #e5e5e5;
+			}
+			.item {
+				line-height: 90rpx;
+				height: 90rpx;
+				display: flex;
+				.text {
+					width: 50%;
+					color: #000;
+				}
+				.value {
+					width: 50%;
+					flex-grow: 1;
+					margin-right: 30rpx;
+					color: #666666;
+					text-align: right;
+				}
+				.value.jiantou::after {
+					content: '>';
+					color: #c7c7cb;
+					margin-left: 10rpx;
+				}
+			}
+		}
+	}
+}
