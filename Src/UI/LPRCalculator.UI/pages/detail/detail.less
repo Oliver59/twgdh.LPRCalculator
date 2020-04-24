@@ -1,0 +1,121 @@
+.page {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	.title {
+		.status_bar {
+			height: var(--status-bar-height);
+			width: 100%;
+		}
+		.status_text {
+			font-size: 32rpx;
+			font-weight: bold;
+			text-align: center;
+			line-height: 88rpx;
+			height: 88rpx;
+			background-color: #f8f8f8;
+		}
+	}
+	.content {
+		flex-shrink: 1;
+		flex-grow: 1;
+		font-size: 24rpx;
+		display: flex;
+		flex-direction: column;
+		> .header {
+			color: #fff;
+			background-color: #408ce2;
+			padding: 25rpx 30rpx 5rpx;
+			.option {
+				display: flex;
+				border: 1px #fff solid;
+				border-radius: 10rpx;
+				width: 440rpx;
+				margin: 0 auto;
+				height: 45rpx;
+				line-height: 45rpx;
+				> .item {
+					flex-grow: 1;
+					text-align: center;
+				}
+				> .item.action {
+					background-color: #fff;
+					color: #408ce2;
+				}
+			}
+			.mainPrice {
+				margin-top: 20rpx;
+				padding-top: 15rpx;
+				display: flex;
+				> .item {
+					width: 25%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					.text {
+						margin: 15rpx 0;
+						font-size: 21rpx;
+						height: 45rpx;
+						line-height: 45rpx;
+					}
+					.value {
+						font-size: 32rpx;
+					}
+				}
+				> .item:nth-child(n + 2) {
+					border-left: 1rpx solid #58b3ea;
+				}
+			}
+		}
+		> .main {
+			flex-grow: 1;
+			flex-shrink: 1;
+			display: flex;
+			flex-direction: column;
+			color: #4480d3;
+			.rowHead {
+				height: 46rpx;
+				line-height: 46rpx;
+				display: flex;
+				.item {
+					width: 25%;
+				}
+				.item:first-child {
+					padding-left: 30rpx;
+				}
+			}
+			.rowBody {
+				font-size: 24rpx;
+				flex-grow: 1;
+				background-color: #eee;
+				overflow: hidden;
+				height: 100rpx;
+				overflow-y: scroll;
+				.yearRegion {
+					.rowYearText {
+						height: 50rpx;
+						line-height: 50rpx;
+						padding-left: 30rpx;
+						background-color: #ebf3f9;
+						position: sticky;
+						top: 0;
+					}
+					.monthRegion {
+						.rowMoth {
+							height: 60rpx;
+							line-height: 60rpx;
+							display: flex;
+							background-color: #fefefe;
+							.item {
+								width: 25%;
+							}
+							.item:first-child {
+								padding-left: 30rpx;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

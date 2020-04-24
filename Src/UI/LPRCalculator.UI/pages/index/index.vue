@@ -27,7 +27,8 @@
 			</view>
 		</view>
 		<view class="parameter">
-			<view class="detailText">等额本息还款详情 ></view>
+			<view class="detailText none" v-if="this.calcuteResult == null">等额本息还款详情</view>
+			<view class="detailText" v-else v-on:click="goDetail()">等额本息还款详情 ></view>
 			<view class="row">
 				<view class="item">
 					<view class="text">贷款类型</view>
@@ -50,8 +51,8 @@
 				<view class="item">
 					<view class="text">期限（年）</view>
 					<view class="value">
-						<picker @change="bindLoanPeriodChange" :value="loanPeriodIndex" :range="loanPeriodArray">
-							<view class="uni-input">{{ loanPeriodArray[loanPeriodIndex] }}</view>
+						<picker @change="bindLoanPeriodChange" :value="loanPeriodIndex" :range="loanPeriodArray" :range-key="'text'">
+							<view class="uni-input">{{ loanPeriodArray[loanPeriodIndex].text }}</view>
 						</picker>
 					</view>
 					<text class="iconfont icon-tubiao- jiantou"></text>
@@ -62,7 +63,7 @@
 					<view class="text" v-if="loansTypeIndex == 2">商贷利率（%）</view>
 					<view class="value">
 						<picker @change="bindInterestRateChange" :value="interestRateIndex" :range="interestRateArray" :range-key="'text'">
-							<view class="uni-input">{{ this.toMoney(interestRateArray[interestRateIndex].value * baseInterestRate) }}</view>
+							<view class="uni-input">{{ this.toMoney(interestRateArray[interestRateIndex].value * this.loanPeriodArray[this.loanPeriodIndex].interest_sd) }}</view>
 						</picker>
 					</view>
 					<text class="iconfont icon-tubiao- jiantou"></text>
@@ -72,7 +73,9 @@
 					<view class="text" v-if="loansTypeIndex == 2">公积金贷利率（%）</view>
 					<view class="value">
 						<picker @change="bindInterestRateChange_Gjj" :value="interestRateIndex_Gjj" :range="interestRateArray_Gjj" :range-key="'text'">
-							<view class="uni-input">{{ this.toMoney(interestRateArray_Gjj[interestRateIndex_Gjj].value * baseInterestRate_Gjj) }}</view>
+							<view class="uni-input">
+								{{ this.toMoney(interestRateArray_Gjj[interestRateIndex_Gjj].value * this.loanPeriodArray[this.loanPeriodIndex].interest_gjj) }}
+							</view>
 						</picker>
 					</view>
 					<text class="iconfont icon-tubiao- jiantou"></text>
@@ -88,13 +91,18 @@ export default {
 	data() {
 		return {
 			repaymentType: 1, //1等额本息 2等额本金
-			baseInterestRate: 4.9, //基准利率
-			baseInterestRate_Gjj: 3.25, //基准利率
 			syLoanAmt: 0, //商业贷款金额
 			gjjLoanAmt: 0, //公积金贷款金额
 			loansTypeArray: ['商业贷款', '公积金贷款', '组合贷款'],
 			loansTypeIndex: 0,
-			loanPeriodArray: [5, 10, 15, 20, 25, 30],
+			loanPeriodArray: [
+				{ text: 5, interest_sd: 4.75, interest_gjj: 2.75 },
+				{ text: 10, interest_sd: 4.9, interest_gjj: 3.25 },
+				{ text: 15, interest_sd: 4.9, interest_gjj: 3.25 },
+				{ text: 20, interest_sd: 4.9, interest_gjj: 3.25 },
+				{ text: 25, interest_sd: 4.9, interest_gjj: 3.25 },
+				{ text: 30, interest_sd: 4.9, interest_gjj: 3.25 }
+			],
 			loanPeriodIndex: 0,
 			interestRateArray: [
 				{ text: '基准利率', value: 1 },
@@ -127,7 +135,7 @@ export default {
 		// 改变贷款类型事件
 		bindLoansTypeChange: function(e) {
 			if (e.target.value == this.loansTypeIndex) return;
-			this.loansTypeIndex = e.target.value;
+			this.loansTypeIndex = parseInt(e.target.value);
 			this.monthlyAmt = 0; //月供
 			this.decreaseAmt = 0; //每月递减额
 			this.interestAmt = 0; //利息
@@ -152,14 +160,14 @@ export default {
 			this.calculateLoan();
 		},
 		//输入商业贷款金额事件
-		onKeyInput_sd: function() {
+		onKeyInput_sd: function(event) {
 			var num = event.target.value;
 			this.syLoanAmt = parseFloat(num);
 			// num = num.toFixed(2);
 			this.calculateLoan();
 		},
 		//输入公积金贷款金额事件
-		onKeyInput_gjj: function() {
+		onKeyInput_gjj: function(event) {
 			var num = event.target.value;
 			// num = num.toFixed(2);
 			this.gjjLoanAmt = parseFloat(num);
@@ -167,30 +175,62 @@ export default {
 		},
 		calculateLoan: function() {
 			let type = this.repaymentType;
-			let year = this.loanPeriodArray[this.loanPeriodIndex];
+			let loanPeriod = this.loanPeriodArray[this.loanPeriodIndex];
+			let year = loanPeriod.text;
 
 			let sdnum = this.syLoanAmt;
 			let gjjnum = this.gjjLoanAmt;
 
-			let sdlilv = this.toMoney(this.interestRateArray[this.interestRateIndex].value * this.baseInterestRate) / 100;
-			let gjjlilv = this.toMoney(this.interestRateArray_Gjj[this.interestRateIndex_Gjj].value * this.baseInterestRate_Gjj) / 100;
+			let sdlilv = this.toMoney(this.interestRateArray[this.interestRateIndex].value * loanPeriod.interest_sd) / 100;
+			let gjjlilv = this.toMoney(this.interestRateArray_Gjj[this.interestRateIndex_Gjj].value * loanPeriod.interest_gjj) / 100;
+
+			if (year == 0) return;
 			console.log(`type:${type}, sdnum:${sdnum}, gjjnum:${gjjnum},  year:${year}, sdlilv:${sdlilv}, gjjlilv:${gjjlilv}`);
+			console.log('this.loansTypeIndex', this.loansTypeIndex);
+			console.log(typeof this.loansTypeIndex);
+			this.calcuteResult = null;
 			switch (this.loansTypeIndex) {
 				case 0:
 					// 商业贷款
+					console.log('商业贷款start····');
+					if (sdnum == 0 || sdlilv == 0) return;
 					this.calcuteResult = calcute.singleDk(type, sdnum, year, sdlilv);
 					break;
 				case 1:
 					// 公积金贷款
+					console.log('公积金贷款start····');
+					if (gjjnum == 0 || gjjlilv == 0) {
+						console.log('跳出公积金贷款');
+						return;
+					}
+					console.log('执行start····');
 					this.calcuteResult = calcute.singleDk(type, gjjnum, year, gjjlilv);
+					console.log('执行完毕');
 					break;
 				case 2:
 					// 组合贷款
+					console.log('组合贷款start····');
 					if (!this.syLoanAmt || !this.gjjLoanAmt) return;
 					this.calcuteResult = calcute.zuhe(type, sdnum, gjjnum, year, year, sdlilv, gjjlilv);
 					break;
 			}
-			console.log(this.calcuteResult);
+			console.log('this.calcuteResult', this.calcuteResult);
+			console.log('this.calcuteResult==null', this.calcuteResult == null);
+		},
+		goDetail: function() {
+			let type = this.repaymentType;
+			let loanPeriod = this.loanPeriodArray[this.loanPeriodIndex];
+			let year = loanPeriod.text;
+
+			let sdnum = this.syLoanAmt;
+			let gjjnum = this.gjjLoanAmt;
+
+			let sdlilv = this.toMoney(this.interestRateArray[this.interestRateIndex].value * loanPeriod.interest_sd) / 100;
+			let gjjlilv = this.toMoney(this.interestRateArray_Gjj[this.interestRateIndex_Gjj].value * loanPeriod.interest_gjj) / 100;
+
+			uni.navigateTo({
+				url: `../detail/detail?loansTypeIndex=${this.loansTypeIndex}&repaymentType=${type}&year=${year}&sdnum=${sdnum}&gjjnum=${gjjnum}&sdlilv=${sdlilv}&gjjlilv=${gjjlilv}`
+			});
 		},
 		// 将数字转化为金额类型
 		toMoney2: function(num) {
@@ -238,6 +278,6 @@ export default {
 </script>
 
 <style lang="less">
-@import 'https://at.alicdn.com/t/font_1738779_rgzhil2d3e.css';
+@import '~@/static/css/iconfont.css';
 @import 'index.less';
 </style>
