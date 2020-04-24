@@ -1,9 +1,9 @@
 <template>
 	<view class="page">
-		<view class="title">
+	<!-- 	<view class="title">
 			<view class="status_bar"></view>
 			<view class="status_text">还款详情</view>
-		</view>
+		</view> -->
 		<view class="content">
 			<view class="header">
 				<view class="option">
@@ -25,7 +25,7 @@
 					</view>
 					<view class="item">
 						<text class="text">贷款月数</text>
-						<text class="value">{{ this.calcuteResult.mouthdataArray.length }}</text>
+						<text class="value">{{ this.getMonths() }}</text>
 					</view>
 				</view>
 			</view>
@@ -119,7 +119,7 @@ export default {
 					let index = Math.floor(i / 12);
 					this.calcuteResult.yearArr[index].monthArr.push(this.calcuteResult.mouthdataArray[i]);
 				}
-				console.log(this.calcuteResult);
+				console.log("this.calcuteResult",this.calcuteResult);
 			}
 		},
 		toMoney: function(number) {
@@ -155,6 +155,9 @@ export default {
 				s[1] += new Array(prec - s[1].length + 1).join('0');
 			}
 			return s.join(dec);
+		},
+		getMonths:function(){
+			return this.calcuteResult.mouthdataArray.length;
 		}
 	}
 };

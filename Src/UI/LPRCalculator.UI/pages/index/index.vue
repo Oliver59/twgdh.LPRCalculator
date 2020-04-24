@@ -27,8 +27,8 @@
 			</view>
 		</view>
 		<view class="parameter">
-			<view class="detailText none" v-if="this.calcuteResult == null">等额本息还款详情</view>
-			<view class="detailText" v-else v-on:click="goDetail()">等额本息还款详情 ></view>
+			<view class="detailText none" v-if="this.resultIsNull()">{{ this.getLinkText() }}</view>
+			<view class="detailText" v-else v-on:click="goDetail()">{{ this.getLinkText() }} ></view>
 			<view class="row">
 				<view class="item">
 					<view class="text">贷款类型</view>
@@ -40,16 +40,16 @@
 					<text class="iconfont icon-tubiao- jiantou"></text>
 				</view>
 				<view class="item" v-if="loansTypeIndex != 1">
-					<view class="text" v-if="loansTypeIndex == 0">贷款金额（万）</view>
-					<view class="text" v-if="loansTypeIndex == 2">商款金额（万）</view>
+					<view class="text" v-if="loansTypeIndex == 0">贷款金额(万)</view>
+					<view class="text" v-if="loansTypeIndex == 2">商款金额(万)</view>
 					<input class="value" placeholder="请输入金额" @input="onKeyInput_sd" type="number" :value="syLoanAmt" />
 				</view>
 				<view class="item" v-if="loansTypeIndex != 0">
-					<view class="text">公积金贷款金额（万）</view>
+					<view class="text">公积金贷款金额(万)</view>
 					<input class="value" placeholder="请输入金额" @input="onKeyInput_gjj" type="number" :value="gjjLoanAmt" />
 				</view>
 				<view class="item">
-					<view class="text">期限（年）</view>
+					<view class="text">期限(年)</view>
 					<view class="value">
 						<picker @change="bindLoanPeriodChange" :value="loanPeriodIndex" :range="loanPeriodArray" :range-key="'text'">
 							<view class="uni-input">{{ loanPeriodArray[loanPeriodIndex].text }}</view>
@@ -59,8 +59,8 @@
 				</view>
 
 				<view class="item" v-if="loansTypeIndex != 1">
-					<view class="text" v-if="loansTypeIndex == 0">利率（%）</view>
-					<view class="text" v-if="loansTypeIndex == 2">商贷利率（%）</view>
+					<view class="text" v-if="loansTypeIndex == 0">利率(%)</view>
+					<view class="text" v-if="loansTypeIndex == 2">商贷利率(%)</view>
 					<view class="value">
 						<picker @change="bindInterestRateChange" :value="interestRateIndex" :range="interestRateArray" :range-key="'text'">
 							<view class="uni-input">{{ this.toMoney(interestRateArray[interestRateIndex].value * this.loanPeriodArray[this.loanPeriodIndex].interest_sd) }}</view>
@@ -69,8 +69,8 @@
 					<text class="iconfont icon-tubiao- jiantou"></text>
 				</view>
 				<view class="item" v-if="loansTypeIndex != 0">
-					<view class="text" v-if="loansTypeIndex == 1">利率（%）</view>
-					<view class="text" v-if="loansTypeIndex == 2">公积金贷利率（%）</view>
+					<view class="text" v-if="loansTypeIndex == 1">利率(%)</view>
+					<view class="text" v-if="loansTypeIndex == 2">公积金贷利率(%)</view>
 					<view class="value">
 						<picker @change="bindInterestRateChange_Gjj" :value="interestRateIndex_Gjj" :range="interestRateArray_Gjj" :range-key="'text'">
 							<view class="uni-input">
@@ -91,8 +91,8 @@ export default {
 	data() {
 		return {
 			repaymentType: 1, //1等额本息 2等额本金
-			syLoanAmt: 0, //商业贷款金额
-			gjjLoanAmt: 0, //公积金贷款金额
+			syLoanAmt: '', //商业贷款金额
+			gjjLoanAmt: '', //公积金贷款金额
 			loansTypeArray: ['商业贷款', '公积金贷款', '组合贷款'],
 			loansTypeIndex: 0,
 			loanPeriodArray: [
@@ -140,8 +140,8 @@ export default {
 			this.decreaseAmt = 0; //每月递减额
 			this.interestAmt = 0; //利息
 			this.totalAmt = 0; //还款总额
-			this.syLoanAmt = 0; //商业贷款金额
-			this.gjjLoanAmt = 0; //商业贷款金额
+			this.syLoanAmt = ''; //商业贷款金额
+			this.gjjLoanAmt = ''; //商业贷款金额
 			this.calcuteResult = null;
 		},
 		// 改变贷款期限事件
@@ -231,6 +231,17 @@ export default {
 			uni.navigateTo({
 				url: `../detail/detail?loansTypeIndex=${this.loansTypeIndex}&repaymentType=${type}&year=${year}&sdnum=${sdnum}&gjjnum=${gjjnum}&sdlilv=${sdlilv}&gjjlilv=${gjjlilv}`
 			});
+		},
+		resultIsNull: function() {
+			return this.calcuteResult == null;
+		},
+		getLinkText: function() {
+			// 1等额本息 2等额本金
+			let type = '等额本息';
+			if (this.repaymentType == 2) {
+				type = '等额本金';
+			}
+			return type + '还款详情';
 		},
 		// 将数字转化为金额类型
 		toMoney2: function(num) {

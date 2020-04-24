@@ -10,8 +10,9 @@
 		{
 			"path": "pages/detail/detail",
 			"style": {
-				"navigationBarTitleText": "还款详情",
-				"navigationStyle":"custom"
+				"navigationBarTitleText": "还款详情"
+				// ,
+				// "navigationStyle":"custom"
 			}
 		}
 	],
